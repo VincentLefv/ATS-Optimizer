@@ -1,39 +1,31 @@
-import { extractATSAnalysis } from "../services/deepseekService.js";
+import { analyzeResumeWithOllama } from "../services/ollamaService.js";
 
 /*
-  CONTROLLER: analyzeResume
-
-  This function:
-  1. Receives resume text from frontend
-  2. Sends it to AI service (DeepSeek)
-  3. Returns ATS score + feedback
+  Controller = receives request from frontend
 */
 export const analyzeResume = async (req, res) => {
   try {
-    // Step 1: Get resume text from request body
     const { resumeText, jobDescription } = req.body;
 
-    // Safety check (very important)
-    if (!resumeText) {
+    if (!resumeText || !jobDescription) {
       return res.status(400).json({
-        error: "Resume text is required",
+        error: "Missing resumeText or jobDescription"
       });
     }
 
-    /*
-      Step 2: Send data to AI service
-      This is where DeepSeek is used
-    */
-    const result = await extractATSAnalysis(resumeText, jobDescription);
+    // Send to AI (Ollama)
+    const result = await analyzeResumeWithOllama(
+      resumeText,
+      jobDescription
+    );
 
-    // Step 3: Send result back to frontend
     return res.json(result);
 
   } catch (error) {
-    console.error("Error analyzing resume:", error);
+    console.error(error);
 
     return res.status(500).json({
-      error: "Something went wrong while analyzing resume",
+      error: "Server error during analysis"
     });
   }
 };

@@ -53,6 +53,7 @@ ${jobDescription}
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        // eslint-disable-next-line no-undef
         Authorization: `Bearer ${process.env.DEEPSEEK_API_KEY}`,
       },
       body: JSON.stringify({
